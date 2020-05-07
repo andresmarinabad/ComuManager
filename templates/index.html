@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Comu Manager</title>
+<link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/skeleton.css') }}">
+</head>
+<body>
+
+<h1 style="margin-left: 1em;">Comu Manager</h1>
+
+<div class="container">
+	<div class="row">
+		<div class="seven columns">
+			<h2>Lista de la comunidad XIII</h2>
+	<table class="u-mid-width">
+		<thead>
+			<tr>
+				<th>Nombre</th>
+				<th>Numero</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for item in items %}
+		<tr>
+		  <td> {{ item.name }} </td>
+		  <td> {{ item.num }} </td>
+		  <td>
+			  <form action="/remove" method="post" style="margin-bottom: -10px;">
+				  <input type="hidden" value="{{item.name}}" name="name">
+				  <input class="button" type="submit" value="Quitar"></input>
+			  </form>
+		  </td>
+		</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+
+	<form action="/add" method="POST">
+		<p>Añadir hermanos a la lista</p>
+		<label for="name">Nombre</label><br>
+	  <input type="text" name="name" id="name"></input><br>
+		<label for="num">Número</label><br>
+	  <input type="text" name="num" id="num"></input><br>
+	  <input class="button-primary" type="submit" value="Añadir"></input>
+	</form>
+		</div>
+		<div class="five columns">
+			<h2>Grupos</h2>
+	<form action="/groups" method="post">
+		<p>Introduce el número de hermanos para formar grupos</p>
+			<p>El mínimo es <strong>1</strong>. El valor por defecto es <strong>5</strong></p>
+		<label for="num_groups">Número</label>
+		<input type="number" min="1" name="num_groups" id="num_groups"></input>
+		<input class="button-primary" type="submit" value="Crear">
+	</form>
+
+	{% for group in groups %}
+	<strong>Grupo {{ group.id }}</strong>
+	<ul>
+		{% for hermano in group.hermanos.split(',') %}
+		<li>{{ hermano }}</li>
+		{% endfor %}
+	</ul>
+	{% endfor %}
+
+	<form action="/send" method="post">
+		<input type="submit" value="Enviar por email">
+	</form>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

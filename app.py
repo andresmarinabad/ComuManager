@@ -3,6 +3,7 @@ from flask import Flask, redirect, url_for, request, render_template
 from flask_mail import Mail, Message
 from pymongo import MongoClient
 import random
+from firebase import firebase
 
 app = Flask(__name__)
 
@@ -21,6 +22,9 @@ mail = Mail(app)
 client = MongoClient(os.environ['MONGODB_HOST'])
 db = client.comu
 lista = []
+
+firebase = firebase.FirebaseApplication(os.environ['FIREBASE_URL'], None)
+firebase_collection = os.environ['FIREBASE_COLLECTION']
 
 
 class Hermano:
@@ -72,7 +76,8 @@ def groups():
     if num_hermanos == '':
         num_hermanos = 5
 
-    local_list = lista.copy()
+    # local_list = lista.copy()
+    local_list = lista[:]
 
     random.shuffle(local_list)
     groups = []
@@ -90,8 +95,8 @@ def groups():
             id_grupo += 1
 
     if (groups[-1].many < int(num_hermanos)):
-        local_list = lista.copy()
-        #return render_template('debug.html', debug=local_list)
+        # local_list = lista.copy()
+        local_list = lista[:]
         random.shuffle(local_list)
         while (groups[-1].many < int(num_hermanos)):
             hermano = local_list[0]
@@ -109,6 +114,20 @@ def groups():
         db.groups.insert_one(item_doc)
     return redirect(url_for('comu'))
 
+
+@app.route('/export', methods=['POST'])
+def exportar():
+    result = firebase.get(firebase_collection, '')
+    if result is not None:
+        for id_child in result:
+            firebase.delete(firebase_collection, id_child)
+    _groups = db.groups.find()
+    groups = [group for group in _groups]
+    for group in groups:
+        data = {int(group['id']): group['hermanos']}
+        firebase.post(firebase_collection, data)
+
+    return redirect(url_for('comu'))
 
 
 @app.route('/add', methods=['POST'])

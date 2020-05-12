@@ -1,3 +1,4 @@
 flask
 pymongo
 Flask-Mail
+python-firebase

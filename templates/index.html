@@ -5,6 +5,11 @@
 <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/skeleton.css') }}">
+	<style>
+		.button:hover {
+  			background-color: red;
+		}
+	</style>
 </head>
 <body>
 
@@ -49,15 +54,14 @@
 		</div>
 		<div class="five columns">
 			<h2>Grupos</h2>
-	<form action="/groups" method="post">
-		<p>Introduce el número de hermanos para formar grupos</p>
+			<p>Introduce el número de hermanos para formar grupos</p>
 			<p>El mínimo es <strong>1</strong>. El valor por defecto es <strong>5</strong></p>
-		<label for="num_groups">Número</label>
-		<input type="number" min="1" name="num_groups" id="num_groups"></input>
-		<input class="button-primary" type="submit" value="Crear">
+	<form action="/groups" method="post">
+		<input type="number" min="1" name="num_groups" id="num_groups" style="width: 100px;"></input>
+		<input type="submit" value="Crear">
 	</form>
-
-	{% for group in groups %}
+			<br><div>
+		{% for group in groups %}
 	<strong>Grupo {{ group.id }}</strong>
 	<ul>
 		{% for hermano in group.hermanos.split(',') %}
@@ -65,9 +69,14 @@
 		{% endfor %}
 	</ul>
 	{% endfor %}
+	</div>
 
-	<form action="/send" method="post">
+
+	<form action="/send" method="post" style="float: left; margin-right: 10px;">
 		<input type="submit" value="Enviar por email">
+	</form>
+	<form action="/export" method="post">
+		<input class="button-primary" type="submit" value="Enviar a firebase">
 	</form>
 		</div>
 	</div>
